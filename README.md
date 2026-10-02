@@ -2,12 +2,12 @@
 
 Single-file ops UI for **Perlan monthly bookings / seats** (title: “2026 · Perlan Bookings”).
 
-> Repo path is still `enrique-perlan/world-cup-2026-bracket` — **rename in GitHub Settings** when convenient (no rename API for agents). Vercel project is already **`perlan-bookings`**.
-
 ## Live
 
 - https://perlan-bookings.vercel.app
-- https://world-cup-2026-bracket-two.vercel.app (legacy alias — keep until bookmarks updated)
+- https://world-cup-2026-bracket-two.vercel.app (legacy Vercel alias — keep until bookmarks updated)
+
+Vercel project: `perlan-bookings` · GitHub: `enrique-perlan/perlan-bookings`
 
 ## Sister app
 
@@ -15,7 +15,7 @@ Executive seats dashboard (static JSON): https://perlan-seats-dashboard.vercel.a
 
 ## Data
 
-Reads `public.bookings_months` from Supabase project `ykxbcwokteambpxpbrxu`. Canonical finance sheet: [Monthly statistic Bókun tickets sold and income](https://docs.google.com/spreadsheets/d/1ZNHAo7-agV57aDGt2K5khK6jDlY7UOwKtme5chEvMvE).
+Reads `public.bookings_months` from Supabase `ykxbcwokteambpxpbrxu`. Canonical finance sheet: [Monthly statistic Bókun tickets sold and income](https://docs.google.com/spreadsheets/d/1ZNHAo7-agV57aDGt2K5khK6jDlY7UOwKtme5chEvMvE).
 
 ## Files
 
