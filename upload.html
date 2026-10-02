@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#f7f5f0" id="meta-theme" />
+<title>Add month · Perlan Bookings</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f1419'/%3E%3Cg transform='translate(32 32) rotate(-90)'%3E%3Ccircle r='22' fill='none' stroke='%231fa67a' stroke-width='11'/%3E%3Ccircle r='22' fill='none' stroke='%23ec6b2d' stroke-width='11' stroke-dasharray='34.56 200'/%3E%3Ccircle r='22' fill='none' stroke='%231f5bb5' stroke-width='11' stroke-dasharray='20.73 200' stroke-dashoffset='-34.56'/%3E%3Ccircle r='6' fill='%230f1419'/%3E%3C/g%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f5f0; --card:#ffffff; --paper:#fbfaf6;
+    --ink:#15171a; --ink-2:#5a5e66; --ink-3:#8a8f99;
+    --line:#e7e3d9; --line-soft:#efece4;
+    --accent:#1fa67a; --warn:#b8593f;
+    --c-1103:#1fa67a; --c-1106:#ec6b2d; --c-1109:#b8b3a8; --c-2001:#1f5bb5;
+    --shadow:0 1px 2px rgba(21,23,26,.04);
+    --tab-active-bg:#15171a; --tab-active-ink:#ffffff;
+  }
+  html[data-theme="dark"]{
+    --bg:#141519; --card:#1d1f24; --paper:#202227;
+    --ink:#edecea; --ink-2:#a8a69f; --ink-3:#807f78;
+    --line:#2a2c31; --line-soft:#24262a;
+    --accent:#2fbd8f; --warn:#cc6a4e;
+    --c-1103:#26b586; --c-1106:#f07b40; --c-1109:#9d988d; --c-2001:#4a80d4;
+    --shadow:none;
+    --tab-active-bg:#edecea; --tab-active-ink:#15171a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:30px 40px 40px;line-height:1.45;
+    transition:background-color .25s ease,color .25s ease}
+  .wrap{max-width:880px;margin:0 auto}
+  button,input,select{font:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:14px;flex-wrap:wrap}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:34px;letter-spacing:-.015em;margin:0;line-height:1.05}
+  h1 em{font-style:italic;color:var(--accent);font-weight:500}
+  .hdr-right{display:flex;align-items:center;gap:10px}
+  .backlink{color:var(--ink-2);text-decoration:none;font-size:13.5px;padding:8px 16px;border:1px solid var(--line);
+    border-radius:999px;background:var(--card);box-shadow:var(--shadow)}
+  .backlink:hover{color:var(--ink)}
+  .theme-toggle{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink-2);
+    width:38px;height:38px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+  .theme-toggle:hover{color:var(--ink)}
+  .theme-toggle svg{width:16px;height:16px}
+  .theme-toggle .moon{display:none}
+  html[data-theme="dark"] .theme-toggle .sun{display:none}
+  html[data-theme="dark"] .theme-toggle .moon{display:block}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .panel h2{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:19px;margin:0 0 4px}
+  .panel .sub{font-size:12.5px;color:var(--ink-3);margin-bottom:14px}
+
+  .drop{border:1.5px dashed var(--line);border-radius:8px;padding:34px 20px;text-align:center;color:var(--ink-2);
+    cursor:pointer;transition:border-color .15s,background .15s;font-size:14px;display:block}
+  .drop:hover,.drop.over{border-color:var(--accent);background:var(--paper)}
+  .drop .big{font-family:'Fraunces',Georgia,serif;font-size:18px;color:var(--ink);margin-bottom:4px}
+  .drop input{display:none}
+  .fname{margin-top:10px;font-size:13px;color:var(--accent);font-weight:500}
+
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  label.fld{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+  input[type=password],input[type=text],select{background:var(--paper);border:1px solid var(--line);border-radius:6px;
+    color:var(--ink);padding:9px 12px;font-size:14px;min-width:210px}
+  .btn{appearance:none;border:none;background:var(--tab-active-bg);color:var(--tab-active-ink);font-weight:500;
+    padding:11px 26px;border-radius:999px;cursor:pointer;font-size:14.5px;transition:opacity .15s}
+  .btn:hover{opacity:.88}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  .note{border-left:3px solid var(--accent);background:var(--paper);padding:10px 14px;border-radius:0 6px 6px 0;
+    font-size:13px;color:var(--ink-2);margin:10px 0}
+  .note.warn{border-color:var(--warn)}
+  .note b{color:var(--ink)}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);
+    border-radius:6px;overflow:hidden;margin:14px 0}
+  .kpi{background:var(--paper);padding:12px 16px}
+  .kpi .label{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+  .kpi .num{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:24px;margin-top:2px;line-height:1}
+
+  .tscroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:560px}
+  th,td{padding:8px 14px;text-align:right;font-size:13.5px;border-top:1px solid var(--line-soft)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{font-weight:500;color:var(--ink-3);text-transform:uppercase;font-size:10px;letter-spacing:.13em;background:var(--paper)}
+  tbody tr.total td{font-weight:600;border-top:1px solid var(--line);background:var(--paper)}
+  td .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px;vertical-align:middle}
+
+  .diag{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--ink-2);background:var(--paper);
+    border:1px solid var(--line-soft);border-radius:6px;padding:10px 14px;margin-top:12px;line-height:1.6}
+
+  .success{border:1px solid var(--accent);border-radius:8px;padding:16px 20px;font-size:14.5px;background:var(--paper)}
+  .success a{color:var(--accent);font-weight:500}
+  .hidden{display:none}
+  footer{margin-top:22px;font-size:12px;color:var(--ink-3);padding-top:14px;border-top:1px solid var(--line)}
+
+  @media (max-width:640px){
+    body{padding:22px 16px 36px}
+    h1{font-size:27px}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    input[type=password],input[type=text],select{min-width:0;flex:1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Add month <em>2026</em></h1>
+    <div class="hdr-right">
+      <a class="backlink" href="index.html">← Dashboard</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.3A8.4 8.4 0 0 1 9.7 3.6a8.4 8.4 0 1 0 10.7 10.7z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <h2>1 · Bókun export</h2>
+    <div class="sub">The monthly .xlsx export — one sheet named “Export”. Everything is processed in your browser; the file itself never leaves your computer.</div>
+    <label class="drop" id="drop">
+      <div class="big">Drop the .xlsx here</div>
+      <div>or click to choose the file</div>
+      <div class="fname" id="fname"></div>
+      <input type="file" id="file" accept=".xlsx,.xlsm" />
+    </label>
+    <div id="parse-error" class="note warn hidden"></div>
+  </section>
+
+  <section class="panel hidden" id="review">
+    <h2>2 · Review</h2>
+    <div class="sub">Extraction rules applied: CANCELLED dropped · combo carts deduped (1106 combos + 1109 cruise twins) · pax parsed from Participants · bookings counted per product row.</div>
+
+    <div class="row">
+      <label class="fld" for="monthsel">Target month</label>
+      <select id="monthsel"></select>
+      <span id="spread" style="font-size:12.5px;color:var(--ink-3)"></span>
+    </div>
+    <div id="warnings"></div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="label">Bookings</div><div class="num" id="k-b">—</div></div>
+      <div class="kpi"><div class="label">Seats</div><div class="num" id="k-s">—</div></div>
+      <div class="kpi"><div class="label">Avg pax</div><div class="num" id="k-a">—</div></div>
+      <div class="kpi"><div class="label">Cancellations</div><div class="num" id="k-c">—</div></div>
+    </div>
+
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Product</th><th>Bookings</th><th>Seats</th><th>Adults</th><th>Children</th><th>Toddlers</th></tr></thead>
+        <tbody id="ptable"></tbody>
+      </table>
+    </div>
+    <div class="diag" id="diag"></div>
+  </section>
+
+  <section class="panel hidden" id="save-panel">
+    <h2>3 · Publish to the dashboard</h2>
+    <div class="sub">Re-uploading the same month replaces it. The passcode lives in Supabase (bookings_app_config), not in this page.</div>
+    <div class="row">
+      <label class="fld" for="passcode">Passcode</label>
+      <input type="password" id="passcode" autocomplete="off" placeholder="Upload passcode" />
+      <button class="btn" id="save">Publish month</button>
+    </div>
+    <div id="save-error" class="note warn hidden"></div>
+    <div id="save-ok" class="success hidden"></div>
+  </section>
+
+  <footer>perlan · seats + id · monthly extraction</footer>
+</div>
+
+<script>
+  // ---------- Theme (same behavior as the dashboard) ----------
+  const root = document.documentElement;
+  const metaTheme = document.getElementById('meta-theme');
+  const readStored = () => { try { return localStorage.getItem('pb-theme'); } catch (e) { return null; } };
+  const storeTheme = t => { try { localStorage.setItem('pb-theme', t); } catch (e) {} };
+  let theme = readStored() ||
+    (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  function applyTheme(t){ theme = t; root.dataset.theme = t;
+    metaTheme.setAttribute('content', t === 'dark' ? '#141519' : '#f7f5f0'); }
+  applyTheme(theme);
+  document.getElementById('theme-toggle').onclick = () => { applyTheme(theme === 'dark' ? 'light' : 'dark'); storeTheme(theme); };
+
+  // ---------- Config ----------
+  const SUPA_URL = 'https://ykxbcwokteambpxpbrxu.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlreGJjd29rdGVhbWJweHBicnh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNDQ5MjgsImV4cCI6MjA5MzcyMDkyOH0.yfUMVmHMDBo2DVT4KIXByqEMGfy0DcXQukSEdg42TKg';
+
+  const MONTH_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  const MONTH_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const fmt = n => n.toLocaleString('en-US');
+
+  // ---------- Extraction rules (mirror of the Cowork/Python pipeline) ----------
+  // Product mapping: case-insensitive on Product title, first match wins.
+  function mapProduct(title){
+    const t = String(title || '').toLowerCase();
+    if (t.includes('deck')) return '2001';
+    if (t.includes('experience')) return '1106';
+    if (t.includes('cruise')) return '1109';
+    if (t.includes('wonders of iceland')) return '1103';
+    return null;
+  }
+  const PRODUCT_ORDER = [
+    ['1103','WOI 1103'], ['1106','WOI experience 1106'],
+    ['1109','WOI cruise ship 1109'], ['2001','Deck 2001'],
+  ];
+
+  function paxOf(text, key){
+    const m = new RegExp(key + '\\s*:\\s*(\\d+)', 'i').exec(String(text || ''));
+    return m ? parseInt(m[1], 10) : 0;
+  }
+
+  // Start date can arrive as a real Excel date (JS Date via cellDates), an Excel
+  // serial number, or a text cell. Returns {y, m} (1-based month) or null.
+  function ymOf(v){
+    if (v instanceof Date && !isNaN(v)) return { y: v.getFullYear(), m: v.getMonth() + 1 };
+    if (typeof v === 'number' && isFinite(v)) {
+      const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+      return { y: d.getUTCFullYear(), m: d.getUTCMonth() + 1 };
+    }
+    if (typeof v === 'string') {
+      let m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(v.trim());
+      if (m) return { y: +m[1], m: +m[2] };
+      m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(v.trim());          // 18.07.2026
+      if (m) return { y: +m[3], m: +m[2] };
+      const d = new Date(v);
+      if (!isNaN(d)) return { y: d.getFullYear(), m: d.getMonth() + 1 };
+    }
+    return null;
+  }
+
+  function extract(workbook, filename){
+    const ws = workbook.Sheets['Export'];
+    if (!ws) throw new Error('No sheet named "Export" found — is this the Bókun export?');
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+    if (rows.length < 2) throw new Error('The Export sheet has no data rows.');
+
+    // Map columns by header NAME, never by position (Bókun has shifted layout before).
+    const header = rows[0].map(h => String(h ?? '').trim().toLowerCase());
+    const col = {};
+    [['cart','cart confirmation code'], ['title','product title'], ['start','start date'],
+     ['status','status'], ['parts','participants']].forEach(([k, name]) => {
+      col[k] = header.indexOf(name);
+      if (col[k] === -1) throw new Error(`Column "${name}" not found — the Bókun export format may have changed. Flag before processing.`);
+    });
+
+    const recs = [];
+    let unparseableDates = 0;
+    const spread = {};                 // 'yyyy-mm' -> row count (all statuses)
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r || r.every(c => c === null || c === '')) continue;
+      const ym = ymOf(r[col.start]);
+      if (!ym) unparseableDates++;
+      else spread[`${ym.y}-${String(ym.m).padStart(2,'0')}`] = (spread[`${ym.y}-${String(ym.m).padStart(2,'0')}`] || 0) + 1;
+      recs.push({
+        cart: String(r[col.cart] ?? ''),
+        title: r[col.title],
+        status: String(r[col.status] ?? '').trim().toUpperCase(),
+        ym,
+        adults: paxOf(r[col.parts], 'adults'),
+        children: paxOf(r[col.parts], 'children'),
+        toddlers: paxOf(r[col.parts], 'toddlers'),
+      });
+    }
+    return { recs, total_rows: recs.length, spread, unparseableDates, filename };
+  }
+
+  function summarize(parsed, y, mnum){
+    const inMonth = r => r.ym && r.ym.y === y && r.ym.m === mnum;
+    const cancelled_excluded = parsed.recs.filter(r => r.status === 'CANCELLED' && inMonth(r)).length;
+    const kept = parsed.recs.filter(r => r.status !== 'CANCELLED' && inMonth(r))
+      .map(r => ({ ...r, prod: mapProduct(r.title) }));
+    const after_filters = kept.length;
+
+    const unmapped = {};
+    kept.filter(r => !r.prod).forEach(r => { const t = String(r.title); unmapped[t] = (unmapped[t] || 0) + 1; });
+
+    // --- Combo dedup ---
+    const carts = p => new Set(kept.filter(r => r.prod === p).map(r => r.cart));
+    const c1103 = carts('1103'), c1106 = carts('1106'), c1109 = carts('1109');
+    const combo1106 = new Set([...c1103].filter(c => c1106.has(c)));
+
+    const drop = new Set();
+    kept.forEach((r, i) => { if (r.prod === '1103' && combo1106.has(r.cart)) drop.add(i); });
+
+    // Cruise twins: 1103 rows dropped only when an identical-pax 1109 row shares the cart.
+    const twinCarts = new Set();
+    const cruiseCand = new Set([...c1103].filter(c => c1109.has(c)));
+    cruiseCand.forEach(c => {
+      const sig = new Set(kept.filter(r => r.cart === c && r.prod === '1109')
+        .map(r => `${r.adults}|${r.children}|${r.toddlers}`));
+      kept.forEach((r, i) => {
+        if (r.cart === c && r.prod === '1103' && sig.has(`${r.adults}|${r.children}|${r.toddlers}`)) {
+          drop.add(i); twinCarts.add(c);
+        }
+      });
+    });
+
+    const final = kept.filter((r, i) => !drop.has(i) && r.prod);
+    const products = PRODUCT_ORDER.map(([code, name]) => {
+      const s = final.filter(r => r.prod === code);
+      const sum = f => s.reduce((a, r) => a + r[f], 0);
+      const adults = sum('adults'), children = sum('children'), toddlers = sum('toddlers');
+      return { code, name, bookings: s.length, seats: adults + children + toddlers, adults, children, toddlers };
+    });
+
+    return {
+      products,
+      diagnostic: {
+        total_rows: parsed.total_rows,
+        after_filters,
+        combo_carts: combo1106.size + twinCarts.size,
+        cancelled_excluded,
+        out_of_month: parsed.total_rows - after_filters - cancelled_excluded,
+      },
+      detail: { combo1106: combo1106.size, twins: twinCarts.size, dropped_rows: drop.size, unmapped },
+    };
+  }
+
+  // ---------- UI wiring ----------
+  const $ = id => document.getElementById(id);
+  let parsed = null, current = null;   // current = {y, mnum, summary}
+
+  function monthHintFromFilename(name){
+    const m = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*[^0-9]*(\d{4})/i.exec(name || '');
+    return m ? { m: MONTH_SHORT.indexOf(m[1].toLowerCase()) + 1, y: +m[2] } : null;
+  }
+
+  function handleFile(file){
+    $('parse-error').classList.add('hidden');
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        if (typeof XLSX === 'undefined') throw new Error('The spreadsheet library could not load — check the internet connection and reload.');
+        const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+        parsed = extract(wb, file.name);
+        $('fname').textContent = `${file.name} · ${fmt(parsed.total_rows)} rows`;
+        buildMonthSelect();
+        $('review').classList.remove('hidden');
+        $('save-panel').classList.remove('hidden');
+        $('save-ok').classList.add('hidden');
+      } catch (err) {
+        parsed = null;
+        $('review').classList.add('hidden'); $('save-panel').classList.add('hidden');
+        $('parse-error').textContent = String(err.message || err);
+        $('parse-error').classList.remove('hidden');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function buildMonthSelect(){
+    const entries = Object.entries(parsed.spread).sort();
+    const sel = $('monthsel'); sel.innerHTML = '';
+    let dominant = null, max = -1;
+    entries.forEach(([k, n]) => { if (n > max) { max = n; dominant = k; } });
+    entries.forEach(([k, n]) => {
+      const [y, m] = k.split('-').map(Number);
+      const o = document.createElement('option');
+      o.value = k; o.textContent = `${MONTH_FULL[m - 1]} ${y} — ${fmt(n)} rows`;
+      if (k === dominant) o.selected = true;
+      sel.appendChild(o);
+    });
+    $('spread').textContent = entries.length > 1
+      ? `rows span ${entries.length} months — dominant month preselected` : '';
+    sel.onchange = refresh;
+    refresh();
+  }
+
+  function refresh(){
+    const [y, mnum] = $('monthsel').value.split('-').map(Number);
+    const s = summarize(parsed, y, mnum);
+    current = { y, mnum, summary: s };
+    window.__parseResult = { y, mnum, ...s };     // exposed for automated tests
+
+    // warnings
+    const w = [];
+    const hint = monthHintFromFilename(parsed.filename);
+    if (hint && (hint.m !== mnum || hint.y !== y))
+      w.push(`<div class="note warn"><b>Check the month:</b> the file name suggests ${MONTH_FULL[hint.m-1]} ${hint.y}, but you are processing ${MONTH_FULL[mnum-1]} ${y}. Files have been misnamed before — confirm against Bókun before publishing.</div>`);
+    if (parsed.unparseableDates)
+      w.push(`<div class="note warn"><b>${parsed.unparseableDates} rows</b> have unreadable Start dates and were treated as outside the month.</div>`);
+    const un = Object.entries(s.detail.unmapped);
+    if (un.length)
+      w.push(`<div class="note warn"><b>Unmapped product titles (excluded):</b> ${un.map(([t, n]) => `${t} ×${n}`).join(' · ')}</div>`);
+    if (!w.length)
+      w.push(`<div class="note">All rows mapped cleanly. Cross-check: Deck 2001 should match the Bókun panel exactly.</div>`);
+    $('warnings').innerHTML = w.join('');
+
+    // KPIs + table
+    const P = s.products;
+    const tb = P.reduce((a, p) => a + p.bookings, 0), ts = P.reduce((a, p) => a + p.seats, 0);
+    $('k-b').textContent = fmt(tb); $('k-s').textContent = fmt(ts);
+    $('k-a').textContent = tb ? (ts / tb).toFixed(1) : '—';
+    $('k-c').textContent = fmt(s.diagnostic.cancelled_excluded);
+    $('ptable').innerHTML = P.map(p => `
+      <tr><td><span class="dot" style="background:var(--c-${p.code})"></span>${p.name}</td>
+      <td>${fmt(p.bookings)}</td><td>${fmt(p.seats)}</td><td>${fmt(p.adults)}</td>
+      <td>${fmt(p.children)}</td><td>${fmt(p.toddlers)}</td></tr>`).join('') +
+      `<tr class="total"><td>Total</td><td>${fmt(tb)}</td><td>${fmt(ts)}</td>
+       <td>${fmt(P.reduce((a,p)=>a+p.adults,0))}</td><td>${fmt(P.reduce((a,p)=>a+p.children,0))}</td>
+       <td>${fmt(P.reduce((a,p)=>a+p.toddlers,0))}</td></tr>`;
+    const d = s.diagnostic;
+    $('diag').textContent =
+      `${fmt(d.total_rows)} total rows | ${fmt(d.after_filters)} after filters | ` +
+      `${fmt(d.combo_carts)} combo carts deduped (${fmt(s.detail.combo1106)} WOI+experience, ${fmt(s.detail.twins)} cruise twins) | ` +
+      `${fmt(d.cancelled_excluded)} cancellations excluded | ${fmt(d.out_of_month)} outside the month`;
+  }
+
+  // drag & drop
+  const drop = $('drop');
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('over');
+    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+  });
+  $('file').addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+  // save
+  $('save').onclick = async () => {
+    if (!current) return;
+    const btn = $('save');
+    $('save-error').classList.add('hidden'); $('save-ok').classList.add('hidden');
+    const passcode = $('passcode').value.trim();
+    if (!passcode) { $('save-error').textContent = 'Enter the upload passcode first.'; $('save-error').classList.remove('hidden'); return; }
+    const { y, mnum, summary } = current;
+    const month_key = `${MONTH_SHORT[mnum - 1]}-${y}`;
+    const payload = {
+      passcode,
+      month: {
+        month_key, label: MONTH_FULL[mnum - 1], year: y, month_num: mnum,
+        source_filename: parsed.filename,
+        diagnostic: summary.diagnostic, products: summary.products,
+      },
+    };
+    btn.disabled = true; btn.textContent = 'Publishing…';
+    try {
+      const res = await fetch(`${SUPA_URL}/functions/v1/upload-month`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY },
+        body: JSON.stringify(payload),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !out.ok) throw new Error(out.error || `HTTP ${res.status}`);
+      $('save-ok').innerHTML = `Published <b>${MONTH_FULL[mnum-1]} ${y}</b>. ` +
+        `<a href="index.html#${month_key}">Open it on the dashboard →</a>`;
+      $('save-ok').classList.remove('hidden');
+    } catch (err) {
+      $('save-error').textContent = 'Could not publish: ' + String(err.message || err);
+      $('save-error').classList.remove('hidden');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Publish month';
+    }
+  };
+</script>
+</body>
+</html>
